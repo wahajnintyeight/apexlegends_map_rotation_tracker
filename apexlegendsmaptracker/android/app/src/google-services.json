@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "241894513140",
+    "project_id": "apex-legends-tracker-c0372",
+    "storage_bucket": "apex-legends-tracker-c0372.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241894513140:android:ccb6a7b5ef4ca124fe01a1",
+        "android_client_info": {
+          "package_name": "com.example.apexlegendsmaptracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "241894513140-66ngmju3p2ibf1us6ouglomru9d0odps.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBDX1hoooge0uscIkCMKhKZXZcD2LrLCE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "241894513140-66ngmju3p2ibf1us6ouglomru9d0odps.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
