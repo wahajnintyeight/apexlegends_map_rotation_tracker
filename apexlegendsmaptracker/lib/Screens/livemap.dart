@@ -21,7 +21,7 @@ class _LiveMapState extends State<LiveMap> {
   void initState() {
     super.initState();
 
-    Timer.periodic(const Duration(seconds: 0), (timer) {
+    Timer.periodic(const Duration(seconds: 5), (timer) {
       fetchApexMap(_streamController);
     });
     // ApexMap Map = ApexMap(start: start, end: end, mapName: mapName, remainingMins: remainingMins, mapBG: mapBG);

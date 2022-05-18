@@ -22,20 +22,17 @@ Future<void> fetchApexMap(StreamController<ApexMap> _streamController) async {
   }
 }
 
-Future<void> fetchUserStats(StreamController<Player> _streamController,
-    String playerName, String platForm) async {
+Future<Player> fetchUserStats(String playerName, String platForm) async {
   String apiKey = "c46d1e51e5dc7e9bc11bf5bdd8368ab8";
-  print(playerName + platForm);
   final response = await http.get(Uri.parse(
       'https://api.mozambiquehe.re/bridge?auth=$apiKey&player=$playerName&platform=$platForm'));
-  print(
-      "https://api.mozambiquehe.re/bridge?auth=$apiKey&player=$playerName&platform=$platForm");
+  print('I receive' + playerName);
   if (response.statusCode == 200) {
-    print("I AM HERE");
     final playerData = json.decode(response.body);
+    print(playerData['realtime']);
     Player playerModel = Player.fromJson(playerData);
-    print(playerModel);
-    _streamController.sink.add(playerModel);
+    print(playerModel.isInGame);
+    return playerModel;
   } else {
     throw Exception('Failed to load player data');
   }

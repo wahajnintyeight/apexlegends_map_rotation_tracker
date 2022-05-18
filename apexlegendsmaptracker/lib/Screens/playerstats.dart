@@ -1,3 +1,4 @@
+import 'package:apexlegendsmaptracker/Screens/menu.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -13,89 +14,186 @@ class PlayerStats extends StatefulWidget {
 }
 
 class _PlayerStatsState extends State<PlayerStats> {
-  StreamController<Player> _streamController = StreamController();
-
+  // StreamController<Player> _streamController = StreamController();
+  TextEditingController userNameController = TextEditingController();
+  late Player playerModel;
   @override
   void initState() {
+    playerModel = Player(0, " ", "PC", 0, 0,0);
     super.initState();
-
-    // Timer.periodic(const Duration(seconds: 0), (timer) {
-    fetchUserStats(_streamController, "WRA1Th_5598", "PC");
-    // });
-    // ApexMap Map = ApexMap(start: start, end: end, mapName: mapName, remainingMins: remainingMins, mapBG: mapBG);
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Row(
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                  color: Colors.amber,
-                  image: DecorationImage(
-                      image: AssetImage(
-                          'assets/kc.jpg'),
-                      fit: BoxFit.cover),
-                ),
-              ),
-              Expanded(
-                flex: 6,
-                child: const TextField(
-                  obscureText: false,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Enter username',
+        appBar: AppBar(
+            backgroundColor: Colors.black,
+            leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                color: Colors.white,
+                onPressed: () => Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => WelcomeScreen())))),
+        body: Column(
+          children: <Widget>[
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.amber,
+                    image: DecorationImage(
+                        image: AssetImage('assets/kc.jpg'), fit: BoxFit.cover),
                   ),
                 ),
-              ),
-            ],
-          ),
-          Container(
-            child: StreamBuilder<Player>(
-              stream: _streamController.stream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: 1,
-                      padding: const EdgeInsets.only(top: 160),
-                      shrinkWrap: true,
-                      itemBuilder: (BuildContext context, int index) {
-                        print(snapshot.data);
-                        // return Text(snapshot.data[index]["name"]);
-                        return Card(
-                          color: Colors.black,
-                          elevation: 2,
-                          child: Column(
-                            children: <Widget>[
-                              Text(snapshot.data!.name,
-                                  style: const TextStyle(
-                                      fontSize: 36, color: Colors.yellow)),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                            ],
-                          ),
-                        );
-                      });
-                  // return Text(snapshot.data!.mapName);
-                } else if (snapshot.hasError) {
-                  return Text(
-                    '${snapshot.error}',
-                    style: TextStyle(color: Colors.cyan),
-                  );
-                }
-                return const CircularProgressIndicator();
-              },
+                Expanded(
+                  flex: 4,
+                  child: TextField(
+                    obscureText: false,
+                    controller: userNameController,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Enter username',
+                        isDense: true,
+                        contentPadding: EdgeInsets.fromLTRB(10, 20, 1, 20)),
+                  ),
+                ),
+              ],
             ),
-          ),
+            Row(
+              children: <Widget>[
+                Row(
+                  children: [
+                    ElevatedButton(
+                        onPressed: () async {
+                          showAlertDialog(context);
+                          playerModel = await fetchUserStats(
+                              userNameController.text, "PC");
+                          print("i was pressed" + playerModel.name);
+                          Navigator.pop(context);
+                          setState(() {
+                            playerModel = playerModel;
+                          });
+                        },
+                        child: const Text('Search')),
+                  ],
+                ),
+                playerCard(playerModel)
+              ],
+            )
+          ],
+        ));
+  }
+
+  showAlertDialog(BuildContext context) {
+    AlertDialog alert = AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(margin: EdgeInsets.only(left: 5), child: Text("Loading")),
         ],
       ),
     );
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  Widget playerCard(Player playerModel) {
+    var heading = playerModel.name;
+    var subheading = playerModel.level.toString();
+    var cardImage =
+        NetworkImage('https://source.unsplash.com/random/800x600?house');
+    var supportingText =
+        'Beautiful home to rent, recently refurbished with modern appliances...';
+    return Expanded(
+        child: Card(
+            child: Column(
+      children: [
+        ListTile(
+          title: Text(
+            heading,
+            style: TextStyle(fontSize: 22),
+          ),
+          subtitle: Text(subheading),
+          trailing: Icon(
+            Icons.check_box_rounded,
+            color: determineGameStatus(playerModel.isInGame),
+          ),
+        ),
+        // Container(
+        //   height: 200.0,
+        //   child: Ink.image(
+        //     image: cardImage,
+        //     fit: BoxFit.cover,
+        //   ),
+        // ),
+        Container(
+          padding: EdgeInsets.all(16.0),
+          alignment: Alignment.centerLeft,
+          child: Text(playerModel.kills.toString()),
+        ),
+        // ButtonBar(
+        //   children: [
+        //     TextButton(
+        //       child: const Text('CONTACT AGENT'),
+        //       onPressed: () {/* ... */},
+        //     ),
+        //     TextButton(
+        //       child: const Text('LEARN MORE'),
+        //       onPressed: () {/* ... */},
+        //     )
+        //   ],
+        // )
+      ],
+    )));
+
+    // return Card(
+    //     child: Column(
+    //   children: [
+    //     ListTile(
+    //       title: Text(heading),
+    //       subtitle: Text(subheading),
+    //       trailing: Icon(Icons.favorite_outline),
+    //     ),
+    //     Container(
+    //       height: 200.0,
+    //       child: Ink.image(
+    //         image: cardImage,
+    //         fit: BoxFit.cover,
+    //       ),
+    //     ),
+    //     Container(
+    //       padding: EdgeInsets.all(16.0),
+    //       alignment: Alignment.centerLeft,
+    //       child: Text(supportingText),
+    //     ),
+    //     ButtonBar(
+    //       children: [
+    //         TextButton(
+    //           child: const Text('CONTACT AGENT'),
+    //           onPressed: () {/* ... */},
+    //         ),
+    //         TextButton(
+    //           child: const Text('LEARN MORE'),
+    //           onPressed: () {/* ... */},
+    //         )
+    //       ],
+    //     )
+    //   ],
+    // ));
+  }
+
+  Color determineGameStatus(int status) {
+    if (status == 0) {
+      return Colors.red;
+    } else {
+      return Colors.green;
+    }
   }
 }
