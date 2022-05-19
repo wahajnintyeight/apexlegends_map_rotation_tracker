@@ -29,9 +29,9 @@ Future<Player> fetchUserStats(String playerName, String platForm) async {
   print('I receive' + playerName);
   if (response.statusCode == 200) {
     final playerData = json.decode(response.body);
-    print(playerData['realtime']);
+    print(playerData['legends']['selected']['ImgAssets']['icon']);
     Player playerModel = Player.fromJson(playerData);
-    print(playerModel.isInGame);
+    // print(playerModel.isInGame);
     return playerModel;
   } else {
     throw Exception('Failed to load player data');
